@@ -7,7 +7,7 @@ ArrayList<DistilledSlice> trimSliceData(ArrayList<DistilledSlice> rawSlices) {
   ArrayList<DistilledSlice> trimmed = new ArrayList<DistilledSlice>();
   
   for (DistilledSlice s : rawSlices) {   
-    // include non-silences AND all silences above a certain duration
+    // include non-silences AND all silences above a certain duration (cut out negligible silences)
     if (s.numPitches != 0 || s.duration > MIN_DURATION) {
       trimmed.add(s);
     }
