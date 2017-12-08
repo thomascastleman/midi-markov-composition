@@ -79,5 +79,13 @@ void playBack(DistilledSlice[] distSlices) {
     
     delay(framesToMillis(current.duration));
   }
-  // STILL NEED TO SEND OFF FOR THE LAST SLICE
+  
+  // end last slice
+  DistilledSlice last = distSlices[distSlices.length - 1];
+  for (int p = 0; p < last.pitchValues.length; p++) {
+    if (last.pitchValues[p] != 0) {
+      bus.sendNoteOff(CHANNEL, scaleFromPitchIndex(p), 0);
+    }
+  }
+  
 }
