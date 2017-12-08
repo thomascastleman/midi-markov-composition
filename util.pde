@@ -27,7 +27,9 @@ int[] copyArray(int[] arr) {
 
 // make copy of distilled slice
 DistilledSlice copySlice(DistilledSlice s) {
-  return new DistilledSlice((int) s.duration, copyArray(s.pitchValues));
+  DistilledSlice copy = new DistilledSlice((int) s.duration, copyArray(s.pitchValues));
+  copy.numPitches = s.numPitches;
+  return copy;
 }
 
 // convert frames to their duration in ms

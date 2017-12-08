@@ -12,6 +12,8 @@ static final int MAXVELOCITY = 127;  // seems to be 127 for some reason
 static final int FRAMERATE = 60;
 static final float FPMS = 0.06; // frames per millisecond
 
+static final int MIN_DURATION = 50;  // min duration for silences
+
 boolean listening = true;
 
 ArrayList<DistilledSlice> slices = new ArrayList<DistilledSlice>();  // all slices to be analyzed
@@ -48,6 +50,15 @@ void draw() {
       println(sl.duration);
     }
     playBack(s);
+    
+    println("\n\nTRIMMING");
+    ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
+    
+    for (DistilledSlice sl : trimmed) {
+      logArray(sl.pitchValues);
+    }
+    
+    
     
   }
 }
