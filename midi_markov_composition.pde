@@ -96,7 +96,7 @@ void playBack(DistilledSlice[] distSlices) {
     }
     
     for (int p = 0; p < slice.pitchValues.length; p++) {
-        if (previous == null || previous.pitchValues[p] == 0) {
+        if (slice.pitchValues[p] != 0 && (previous == null || previous.pitchValues[p] == 0)) {
           bus.sendNoteOn(CHANNEL, p, slice.pitchValues[p]);
         }
     }
