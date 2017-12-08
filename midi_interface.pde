@@ -19,7 +19,7 @@ void noteOn(int c, int p, int v) {
     logArray(currentSlice.pitchValues);
     
     
-    currentSlice.duration = 1;  // reset duration
+    currentSlice.duration = 0;  // reset duration
   }
 }
 
@@ -41,6 +41,6 @@ void noteOff(int c, int p, int v) {
     currentSlice.numPitches--;
     
     
-    currentSlice.duration = 1;  // reset duration
+    currentSlice.duration = 0;  // reset duration
   }
 }
