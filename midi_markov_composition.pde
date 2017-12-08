@@ -7,6 +7,8 @@ static final int MINPITCH = 21;
 static final int MAXPITCH = 108;
 static final int CHANNEL = 0;
 
+static final int MAXVELOCITY = 127;  // seems to be 127 for some reason
+
 boolean listening = true;
 
 ArrayList<DistilledSlice> slices = new ArrayList<DistilledSlice>();  // all slices to be analyzed
@@ -24,45 +26,109 @@ void setup() {
   bus = new MidiBus(this, 0, 3);
   
   currentSlice = new DistilledSlice(0, new int[MAXPITCH - MINPITCH + 1]);
+ 
+  
 }
 
 void draw() {
   currentSlice.duration++;  // increment age of current slice, always
   
-  // debug 
-  println(currentSlice.pitchValues);
+  //debug
+  if (frameCount > 500) {
+    println("FINISHED LISTENING");
+    listening = false;
+    noLoop();
+    
+    DistilledSlice[] s = castToArray(slices);
+    for (DistilledSlice sl : s) {
+      logArray(sl.pitchValues);
+      println(sl.duration);
+    }
+    playBack(s);
+    
+  }
+}
+
+DistilledSlice[] castToArray(ArrayList<DistilledSlice> arr) {
+  DistilledSlice[] copy = new DistilledSlice[arr.size()];
+  for (int i = 0; i < arr.size(); i++) {
+    copy[i] = arr.get(i);
+  }
+  return copy;
+}
+
+void logArray(int[] arr) {
+  for (int i : arr) {
+    print(i + " ");
+  }
+  println("");
+}
+
+// copy an integer array
+int[] copyArray(int[] arr) {
+  int[] copy = new int[arr.length];
+  
+  for (int i = 0; i < arr.length; i++) {
+    copy[i] = arr[i];
+  }
+  return copy;
 }
 
 // make copy of distilled slice
 DistilledSlice copySlice(DistilledSlice s) {
-  return new DistilledSlice(s.duration, s.pitchValues);
+  return new DistilledSlice((int) s.duration, copyArray(s.pitchValues));
 }
 
 // get pitch index from a given pitch value
 int scaleToPitchIndex(int pitch) {
   return pitch - MINPITCH;
 }
+// get pitch from a pitch index 
+int scaleFromPitchIndex(int index) {
+  return index + MINPITCH;
+}
 
 // MIDI INPUT FUNCTIONS:
 void noteOn(int c, int p, int v) {
   if (listening) {
+    
+    // dbeug
+    println(currentSlice.duration);
+    
+    currentSlice.pitchValues[scaleToPitchIndex(p)] = v;  // update current slice to reflect new note
+    currentSlice.numPitches++;
+    
+    // debug
+    logArray(currentSlice.pitchValues);
+    
+    
     // update slice at pitch position to reflect note activation
     slices.add(copySlice(currentSlice));  // add copy of previous slice to slices
-    currentSlice.pitchValues[scaleToPitchIndex(p)] = v;  // update current slice to reflect new note
+    
     currentSlice.duration = 1;  // reset duration
   }
 }
 
 void noteOff(int c, int p, int v) {
   if (listening) {
-    // update slice at pitch position back to 0
-    slices.add(copySlice(currentSlice));  // add copy of previous to slices
+    
+    // debug 
+    println(currentSlice.duration);
+    
     currentSlice.pitchValues[scaleToPitchIndex(p)] = 0;  // reset note to 0
+    currentSlice.numPitches--;
+    
+    // if not just empty space
+    if (currentSlice.numPitches > 0) {
+      logArray(currentSlice.pitchValues);
+      
+      // update slice at pitch position to reflect note deactivation
+      slices.add(copySlice(currentSlice));  // add copy of previous slice to slices
+    }
+    
     currentSlice.duration = 1;  // reset duration
   }
 }
-
-
 
 // MARKOV CHAIN FUNCTIONS:
 
@@ -79,29 +145,37 @@ DistilledSlice[] compose() {
 
 void playBack(DistilledSlice[] distSlices) {
   DistilledSlice previous = null;
-  DistilledSlice slice;
+  DistilledSlice next = null;
+  DistilledSlice current = null;
+  
+  // for each slice
   for (int i = 0; i < distSlices.length; i++) {
-    slice = distSlices[i];
-    
     if (i > 0) {
       previous = distSlices[i - 1];
-      
-      for (int p = 0; p < slice.pitchValues.length; p++) {
-        // if note now off
-        if (slice.pitchValues[p] == 0 && previous.pitchValues[p] != 0) {
-          bus.sendNoteOff(CHANNEL, p, 0);
-        }
+    }
+    if (i < distSlices.length - 1) {
+      next = distSlices[i + 1];
+    }
+    
+    current = distSlices[i];
+    
+    for (int p = 0; p < current.pitchValues.length; p++) {
+      // if previously inactive, but now active
+      if (current.pitchValues[p] != 0 && (previous == null || previous.pitchValues[p] == 0)) {
+        bus.sendNoteOn(CHANNEL, scaleFromPitchIndex(p), current.pitchValues[p]);
       }
-      
+      // if previously active, but now inactive
+      if (current.pitchValues[p] == 0 && (previous != null && previous.pitchValues[p] != 0)) {
+        bus.sendNoteOff(CHANNEL, scaleFromPitchIndex(p), 0);
+      }
     }
     
-    for (int p = 0; p < slice.pitchValues.length; p++) {
-        if (slice.pitchValues[p] != 0 && (previous == null || previous.pitchValues[p] == 0)) {
-          bus.sendNoteOn(CHANNEL, p, slice.pitchValues[p]);
-        }
+    if (next != null) {
+      int scale = 200;
+      println("Sustaining for " + next.duration + scale);
+      delay(next.duration + scale);
+      println("Finished sustaining");
     }
-    delay(slice.duration);
-    
   }
   
 }
