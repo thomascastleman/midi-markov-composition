@@ -9,6 +9,9 @@ static final int CHANNEL = 0;
 
 static final int MAXVELOCITY = 127;  // seems to be 127 for some reason
 
+static final int FRAMERATE = 60;
+static final float FPMS = 0.06; // frames per millisecond
+
 boolean listening = true;
 
 ArrayList<DistilledSlice> slices = new ArrayList<DistilledSlice>();  // all slices to be analyzed
@@ -21,6 +24,7 @@ int ngram = 3;
 
 void setup() {
   size(300, 300);
+  frameRate(FRAMERATE);
   
   MidiBus.list();  // list available midi devices
   bus = new MidiBus(this, 0, 3);
@@ -34,10 +38,9 @@ void draw() {
   currentSlice.duration++;  // increment age of current slice, always
   
   //debug
-  if (frameCount > 500) {
+  if (frameCount > 500 && listening == true) {
     println("FINISHED LISTENING");
     listening = false;
-    noLoop();
     
     DistilledSlice[] s = castToArray(slices);
     for (DistilledSlice sl : s) {
@@ -49,103 +52,10 @@ void draw() {
   }
 }
 
-DistilledSlice[] castToArray(ArrayList<DistilledSlice> arr) {
-  DistilledSlice[] copy = new DistilledSlice[arr.size()];
-  for (int i = 0; i < arr.size(); i++) {
-    copy[i] = arr.get(i);
-  }
-  return copy;
-}
-
-void logArray(int[] arr) {
-  for (int i : arr) {
-    print(i + " ");
-  }
-  println("");
-}
-
-// copy an integer array
-int[] copyArray(int[] arr) {
-  int[] copy = new int[arr.length];
-  
-  for (int i = 0; i < arr.length; i++) {
-    copy[i] = arr[i];
-  }
-  return copy;
-}
-
-// make copy of distilled slice
-DistilledSlice copySlice(DistilledSlice s) {
-  return new DistilledSlice((int) s.duration, copyArray(s.pitchValues));
-}
-
-// get pitch index from a given pitch value
-int scaleToPitchIndex(int pitch) {
-  return pitch - MINPITCH;
-}
-// get pitch from a pitch index 
-int scaleFromPitchIndex(int index) {
-  return index + MINPITCH;
-}
-
-// MIDI INPUT FUNCTIONS:
-void noteOn(int c, int p, int v) {
-  if (listening) {
-    
-    // dbeug
-    println(currentSlice.duration);
-    
-    currentSlice.pitchValues[scaleToPitchIndex(p)] = v;  // update current slice to reflect new note
-    currentSlice.numPitches++;
-    
-    // debug
-    logArray(currentSlice.pitchValues);
-    
-    
-    // update slice at pitch position to reflect note activation
-    slices.add(copySlice(currentSlice));  // add copy of previous slice to slices
-    
-    currentSlice.duration = 1;  // reset duration
-  }
-}
-
-void noteOff(int c, int p, int v) {
-  if (listening) {
-    
-    // debug 
-    println(currentSlice.duration);
-    
-    currentSlice.pitchValues[scaleToPitchIndex(p)] = 0;  // reset note to 0
-    currentSlice.numPitches--;
-    
-    // if not just empty space
-    if (currentSlice.numPitches > 0) {
-      logArray(currentSlice.pitchValues);
-      
-      // update slice at pitch position to reflect note deactivation
-      slices.add(copySlice(currentSlice));  // add copy of previous slice to slices
-    }
-    
-    currentSlice.duration = 1;  // reset duration
-  }
-}
-
-// MARKOV CHAIN FUNCTIONS:
-
-// train on slices[], populate nextSlice
-void train() {
-  
-}
-
-DistilledSlice[] compose() {
-  return new DistilledSlice[0];
-}
-
 // AUDIO PLAYBACK
 
 void playBack(DistilledSlice[] distSlices) {
   DistilledSlice previous = null;
-  DistilledSlice next = null;
   DistilledSlice current = null;
   
   // for each slice
@@ -153,11 +63,8 @@ void playBack(DistilledSlice[] distSlices) {
     if (i > 0) {
       previous = distSlices[i - 1];
     }
-    if (i < distSlices.length - 1) {
-      next = distSlices[i + 1];
-    }
     
-    current = distSlices[i];
+    current = distSlices[i]; 
     
     for (int p = 0; p < current.pitchValues.length; p++) {
       // if previously inactive, but now active
@@ -170,17 +77,7 @@ void playBack(DistilledSlice[] distSlices) {
       }
     }
     
-    if (next != null) {
-      int scale = 200;
-      println("Sustaining for " + next.duration + scale);
-      delay(next.duration + scale);
-      println("Finished sustaining");
-    }
+    delay(framesToMillis(current.duration));
   }
-  
-}
-
-void delay(int time) {
-  int current = millis();
-  while (millis () < current+time) Thread.yield();
+  // STILL NEED TO SEND OFF FOR THE LAST SLICE
 }
