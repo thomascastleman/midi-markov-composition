@@ -54,8 +54,10 @@ void draw() {
     println("\n\nTRIMMING");
     ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
     
+    println("Converted: ");
     for (DistilledSlice sl : trimmed) {
-      logArray(sl.pitchValues);
+      RawPitch conversion = distilledToRawPitch(sl);
+      logArray(conversion.activatedPitches);
     }
     
     

@@ -16,6 +16,16 @@ ArrayList<DistilledSlice> trimSliceData(ArrayList<DistilledSlice> rawSlices) {
 }
 
 void train(ArrayList<DistilledSlice> trainingData) {
+  ArrayList<RawPitch> keyArray;
+  ArrayList<DistilledSlice> valueArray;
+  
+  for (int i = 0; i < trainingData.size(); i++) {
+    
+    
+    
+  }
+  
+  
   
 }
 

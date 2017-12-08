@@ -1,5 +1,17 @@
 
 
+RawPitch distilledToRawPitch(DistilledSlice s) {
+  int[] active = new int[s.numPitches];
+  int index = 0;
+  for (int p = 0; p < s.pitchValues.length; p++) {
+    if (s.pitchValues[p] != 0) {
+      active[index] = p;
+      index++;
+    }
+  }
+  return new RawPitch(active);
+}
+
 DistilledSlice[] castToArray(ArrayList<DistilledSlice> arr) {
   DistilledSlice[] copy = new DistilledSlice[arr.size()];
   for (int i = 0; i < arr.size(); i++) {
