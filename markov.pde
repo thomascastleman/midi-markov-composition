@@ -7,6 +7,8 @@ void train(ArrayList<DistilledSlice> trainingData) {
   
   // for all training data
   for (int i = 0; i < trainingData.size() - ngram; i++) {
+    keyArray.clear();    // make sure keyarray is empty  
+    
     // get n-gram
     ArrayList<DistilledSlice> gram = new ArrayList<DistilledSlice>(trainingData.subList(i, i + ngram));
     
@@ -15,8 +17,19 @@ void train(ArrayList<DistilledSlice> trainingData) {
         keyArray.add(distilledToRawPitch(s));
     }
     
+
+    
     // get value following ngram
     DistilledSlice value = trainingData.get(i + ngram);
+    
+    
+        println("NGRAM is ");
+    for (RawPitch r : keyArray) {
+        print("Pitches: ");
+        logArray(r.activatedPitches);
+    }
+    println("\nFollowing slice is ");
+    logArray(value.pitchValues);
     
     // if no entry exists
     if (nextSlice.get(keyArray) == null) {

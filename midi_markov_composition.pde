@@ -44,6 +44,8 @@ void draw() {
     println("FINISHED LISTENING");
     listening = false;
     
+    noLoop();
+    
     // convert to prim array for playback
     DistilledSlice[] s = castToArray(slices);
     for (DistilledSlice sl : s) {
@@ -56,12 +58,22 @@ void draw() {
     println("\n\nTRIMMING");
     ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
     
-    // convert to raw pitch testing
-    println("Converted: ");
+    //// convert to raw pitch testing
+    //println("Converted: ");
+    //for (DistilledSlice sl : trimmed) {
+    //  RawPitch conversion = distilledToRawPitch(sl);
+    //  logArray(conversion.activatedPitches);
+    //}
+    
+    println("\nTRAINING DATA:");
     for (DistilledSlice sl : trimmed) {
-      RawPitch conversion = distilledToRawPitch(sl);
-      logArray(conversion.activatedPitches);
+        logArray(sl.pitchValues);
     }
+    
+    // train on data
+    train(trimmed);
+    
+    
     
     
     
