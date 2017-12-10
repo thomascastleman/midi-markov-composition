@@ -2,7 +2,7 @@
 
 // MIDI INPUT FUNCTIONS:
 
-
+// when note on received
 void noteOn(int c, int p, int v) {
   if (listening) {
     
@@ -18,11 +18,11 @@ void noteOn(int c, int p, int v) {
     // debug
     logArray(currentSlice.pitchValues);
     
-    
     currentSlice.duration = 0;  // reset duration
   }
 }
 
+// when note off received
 void noteOff(int c, int p, int v) {
   if (listening) {
     

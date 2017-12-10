@@ -10,7 +10,7 @@ static final int CHANNEL = 0;
 static final int MAXVELOCITY = 127;  // seems to be 127 for some reason
 
 static final int FRAMERATE = 60;
-static final float FPMS = 0.06; // frames per millisecond
+static final float FPMS = (float) FRAMERATE / 1000.0; // frames per millisecond
 
 static final int MIN_DURATION = 50;  // min duration for silences
 
@@ -44,6 +44,7 @@ void draw() {
     println("FINISHED LISTENING");
     listening = false;
     
+    // convert to prim array for playback
     DistilledSlice[] s = castToArray(slices);
     for (DistilledSlice sl : s) {
       logArray(sl.pitchValues);
@@ -51,9 +52,11 @@ void draw() {
     }
     playBack(s);
     
+    // trim slices
     println("\n\nTRIMMING");
     ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
     
+    // convert to raw pitch testing
     println("Converted: ");
     for (DistilledSlice sl : trimmed) {
       RawPitch conversion = distilledToRawPitch(sl);
