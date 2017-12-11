@@ -3,12 +3,20 @@
 // MARKOV CHAIN FUNCTIONS
 
 void train(ArrayList<DistilledSlice> trainingData) {
+  ArrayList<DistilledSlice> gram;
   
   // for all training data
-  for (int i = 0; i < trainingData.size() - ngram; i++) {
+  for (int i = 0; i < trainingData.size(); i++) {
     
-    // get n-gram
-    ArrayList<DistilledSlice> gram = new ArrayList<DistilledSlice>(trainingData.subList(i, i + ngram));
+    if (i < trainingData.size() - ngram) {
+        // get n-gram
+        gram = new ArrayList<DistilledSlice>(trainingData.subList(i, i + ngram));
+    } else {
+        // wrap around to beginning of slices
+       gram = new ArrayList<DistilledSlice>(trainingData.subList(i, trainingData.size()));
+        int remaining = ngram - gram.size();
+        gram.addAll(new ArrayList<DistilledSlice>(trainingData.subList(0, remaining)));
+    }
     
     // convert slices to raw pitch values
     int[][] pitches = new int[ngram][];
@@ -20,7 +28,13 @@ void train(ArrayList<DistilledSlice> trainingData) {
     PitchNGram k = new PitchNGram(pitches);
 
     // get value following ngram
-    DistilledSlice value = trainingData.get(i + ngram);
+    DistilledSlice value;
+    if (i < trainingData.size() - ngram) {
+        value = trainingData.get(i + ngram);
+    } else {
+        // wrap around once again
+        value = trainingData.get((i +  ngram) % trainingData.size());
+    }
     
     // if no entry exists
     if (map.get(k) == null) {
@@ -36,6 +50,8 @@ void train(ArrayList<DistilledSlice> trainingData) {
     }
   }
   
+  
+  // // DEBUG:
   //ArrayList<PitchNGram> keys = new ArrayList<PitchNGram>(map.keySet());
   
   //for (PitchNGram ngram : keys) {

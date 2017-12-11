@@ -23,7 +23,7 @@ DistilledSlice currentSlice;  // current slice being played
 HashMap<PitchNGram, ArrayList<DistilledSlice>> map = new HashMap<PitchNGram, ArrayList<DistilledSlice>>();
 
 // number of slices in an n-gram
-int ngram = 3;
+int ngram = 2;
 
 void setup() {
   size(300, 300);
@@ -118,7 +118,7 @@ void draw() {
     
     println("COMPOSIING...");
     // generate composition
-    ArrayList<DistilledSlice> comp = compose(125, trimmed);
+    ArrayList<DistilledSlice> comp = compose(150, trimmed);
     println("Complete");
     
     println("PLAYING BACK");
