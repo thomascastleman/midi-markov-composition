@@ -3,63 +3,51 @@
 // MARKOV CHAIN FUNCTIONS
 
 void train(ArrayList<DistilledSlice> trainingData) {
-  ArrayList<RawPitch> keyArray = new ArrayList<RawPitch>();
   
   // for all training data
   for (int i = 0; i < trainingData.size() - ngram; i++) {
-    keyArray.clear();    // make sure keyarray is empty  
     
     // get n-gram
     ArrayList<DistilledSlice> gram = new ArrayList<DistilledSlice>(trainingData.subList(i, i + ngram));
     
-    // convert slices to raw pitch objects
-    for (DistilledSlice s : gram) {
-        keyArray.add(distilledToRawPitch(s));
+    // convert slices to raw pitch values
+    int[][] pitches = new int[ngram][];
+    for (int j = 0; j < ngram; j++) {
+        pitches[j] = distilledToPitchArray(gram.get(j));
     }
     
+    // create key for hashmap
+    PitchNGram k = new PitchNGram(pitches);
 
-    
     // get value following ngram
     DistilledSlice value = trainingData.get(i + ngram);
     
-    
-        println("NGRAM is ");
-    for (RawPitch r : keyArray) {
-        print("Pitches: ");
-        logArray(r.activatedPitches);
-    }
-    println("\nFollowing slice is ");
-    logArray(value.pitchValues);
-    
     // if no entry exists
-    if (nextSlice.get(keyArray) == null) {
+    if (map.get(k) == null) {
         // make new entry with empty list
         ArrayList<DistilledSlice> valueArray = new ArrayList<DistilledSlice>();
         valueArray.add(value);
-        nextSlice.put(keyArray, valueArray);
+        map.put(k, valueArray);
     } else {
         // update previous entry
-        ArrayList<DistilledSlice> newValue = nextSlice.get(keyArray);
+        ArrayList<DistilledSlice> newValue = map.get(k);
         newValue.add(value);
-        nextSlice.put(keyArray, newValue);
+        map.put(k, newValue);
     }
   }
   
+  ArrayList<PitchNGram> keys = new ArrayList<PitchNGram>(map.keySet());
   
-  ArrayList<ArrayList<RawPitch>> keys = new ArrayList<ArrayList<RawPitch>>(nextSlice.keySet());
-  
-  for (ArrayList<RawPitch> rawList : keys) {
-      println("Key: ");
-      for (RawPitch r : rawList) {
-          logArray(r.activatedPitches);
+  for (PitchNGram ngram : keys) {
+      println("key: ");
+      for (int[] arr : ngram.pitchValueSlices) {
+          logArray(arr);
       }
-      println("");
-      print("Values: ");
-      for (DistilledSlice s : nextSlice.get(rawList)) {
+      println("values: ");
+      for (DistilledSlice s : map.get(ngram)) {
           logArray(s.pitchValues);
       }
   }
-  
   
   
 }

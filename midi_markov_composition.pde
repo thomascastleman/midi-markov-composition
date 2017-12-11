@@ -20,7 +20,8 @@ ArrayList<DistilledSlice> slices = new ArrayList<DistilledSlice>();  // all slic
 DistilledSlice currentSlice;  // current slice being played
 
 // hashmap of raw pitch values to all possible DistilledSlice successors
-HashMap<ArrayList<RawPitch>, ArrayList<DistilledSlice>> nextSlice = new HashMap<ArrayList<RawPitch>, ArrayList<DistilledSlice>>();
+HashMap<PitchNGram, ArrayList<DistilledSlice>> map = new HashMap<PitchNGram, ArrayList<DistilledSlice>>();
+
 // number of slices in an n-gram
 int ngram = 3;
 
@@ -49,10 +50,6 @@ void setup() {
   t2[2] = new int[]{5, 4, 6};
   
   HashMap<PitchNGram, ArrayList<Integer>> map = new HashMap<PitchNGram, ArrayList<Integer>>();
-  
-  
-  
-  
   
   PitchNGram test1 = new PitchNGram(t1);
   PitchNGram test2 = new PitchNGram(t2);
@@ -84,47 +81,40 @@ void setup() {
   println(map.get(test1));
   println(map.get(test2));
   
-  
- 
- // DEBUGE
- noLoop();
-  
 }
 
-//// DEBUG
-
-//void draw() {
-//  currentSlice.duration++;  // increment age of current slice, always
+void draw() {
+  currentSlice.duration++;  // increment age of current slice, always
   
-//  //debug
-//  if (frameCount > 500 && listening == true) {
-//    println("FINISHED LISTENING");
-//    listening = false;
+  //debug
+  if (frameCount > 500 && listening == true) {
+    println("FINISHED LISTENING");
+    listening = false;
     
-//    noLoop();
+    noLoop();
     
-//    // convert to prim array for playback
-//    DistilledSlice[] s = castToArray(slices);
-//    playBack(s);
+    // convert to prim array for playback
+    DistilledSlice[] s = castToArray(slices);
+    playBack(s);
     
-//    // trim slices
-//    println("\n\nTRIMMING");
-//    ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
+    // trim slices
+    println("\n\nTRIMMING");
+    ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
     
-//    println("\nTRAINING DATA:");
-//    for (DistilledSlice sl : trimmed) {
-//        logArray(sl.pitchValues);
-//    }
+    println("\nTRAINING DATA:");
+    for (DistilledSlice sl : trimmed) {
+        logArray(sl.pitchValues);
+    }
     
-//    // train on data
-//    train(trimmed);
-    
-    
+    // train on data
+    train(trimmed);
     
     
     
-//  }
-//}
+    
+    
+  }
+}
 
 // AUDIO PLAYBACK
 
