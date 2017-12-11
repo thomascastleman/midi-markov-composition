@@ -8,4 +8,5 @@ class RawPitch {
     this.activatedPitches = _activatedPitches;
   }
   
+  
 }
