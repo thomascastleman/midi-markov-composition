@@ -87,7 +87,7 @@ void draw() {
   currentSlice.duration++;  // increment age of current slice, always
   
   //debug
-  if (frameCount > 500 && listening == true) {
+  if (frameCount > 1000 && listening == true) {
     println("FINISHED LISTENING");
     listening = false;
     
@@ -109,9 +109,13 @@ void draw() {
     // train on data
     train(trimmed);
     
-    // generate composition
-    ArrayList<DistilledSlice> comp = compose(30, trimmed);
     
+    println("COMPOSIING...");
+    // generate composition
+    ArrayList<DistilledSlice> comp = compose(50, trimmed);
+    println("Complete");
+    
+    println("PLAYING BACK");
     playBack(castToArray(comp));
     
     
