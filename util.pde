@@ -13,18 +13,6 @@ ArrayList<DistilledSlice> trimSliceData(ArrayList<DistilledSlice> rawSlices) {
   return trimmed;
 }
 
-//RawPitch distilledToRawPitch(DistilledSlice s) {
-//  int[] active = new int[s.numPitches];
-//  int index = 0;
-//  for (int p = 0; p < s.pitchValues.length; p++) {
-//    if (s.pitchValues[p] != 0) {
-//      active[index] = p;
-//      index++;
-//    }
-//  }
-//  return new RawPitch(active);
-//}
-
 // convert distilled slice to an array of only the activated pitch values (for hashmap)
 int[] distilledToPitchArray(DistilledSlice s) {
   int[] active = new int[s.numPitches];
