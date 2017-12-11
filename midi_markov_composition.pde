@@ -28,57 +28,103 @@ void setup() {
   size(300, 300);
   frameRate(FRAMERATE);
   
-  MidiBus.list();  // list available midi devices
+  // MidiBus.list();  // list available midi devices
   bus = new MidiBus(this, 0, 3);
   
   currentSlice = new DistilledSlice(0, new int[MAXPITCH - MINPITCH + 1]);
+  
+  
+  
+  
+  // DBUG -------------------------------------------------------------------
+  
+  int[][] t1 = new int[3][];
+  t1[0] = new int[]{0, 1, 2};
+  t1[1] = new int[]{3, 2};
+  t1[2] = new int[]{5, 4, 6};
+  
+  int[][] t2 = new int[3][];
+  t2[0] = new int[]{0, 1, 2};
+  t2[1] = new int[]{3, 2};
+  t2[2] = new int[]{5, 4, 6};
+  
+  HashMap<PitchNGram, ArrayList<Integer>> map = new HashMap<PitchNGram, ArrayList<Integer>>();
+  
+  
+  
+  
+  
+  PitchNGram test1 = new PitchNGram(t1);
+  PitchNGram test2 = new PitchNGram(t2);
+  
+  println("test 1");
+  for (int[] arr : test1.pitchValueSlices) {
+      logArray(arr);
+  }
+  println("Hash: " + test1.hashCode());
+  
+  println("test 2");
+  for (int[] arr : test2.pitchValueSlices) {
+      logArray(arr);
+  }
+  println("Hash: " + test2.hashCode());
+  
+  
+  ArrayList<Integer> value = new ArrayList<Integer>();
+  value.add(12);
+  map.put(test1, value);
+  
+  println(map.get(test1));
+  println(map.get(test2));
+  
+  ArrayList<Integer> newVal = map.get(test2);
+  newVal.add(132);
+  map.put(test1, newVal);
+  
+  println(map.get(test1));
+  println(map.get(test2));
+  
+  
  
+ // DEBUGE
+ noLoop();
   
 }
 
-void draw() {
-  currentSlice.duration++;  // increment age of current slice, always
+//// DEBUG
+
+//void draw() {
+//  currentSlice.duration++;  // increment age of current slice, always
   
-  //debug
-  if (frameCount > 500 && listening == true) {
-    println("FINISHED LISTENING");
-    listening = false;
+//  //debug
+//  if (frameCount > 500 && listening == true) {
+//    println("FINISHED LISTENING");
+//    listening = false;
     
-    noLoop();
+//    noLoop();
     
-    // convert to prim array for playback
-    DistilledSlice[] s = castToArray(slices);
-    for (DistilledSlice sl : s) {
-      logArray(sl.pitchValues);
-      println(sl.duration);
-    }
-    playBack(s);
+//    // convert to prim array for playback
+//    DistilledSlice[] s = castToArray(slices);
+//    playBack(s);
     
-    // trim slices
-    println("\n\nTRIMMING");
-    ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
+//    // trim slices
+//    println("\n\nTRIMMING");
+//    ArrayList<DistilledSlice> trimmed = trimSliceData(slices);
     
-    //// convert to raw pitch testing
-    //println("Converted: ");
-    //for (DistilledSlice sl : trimmed) {
-    //  RawPitch conversion = distilledToRawPitch(sl);
-    //  logArray(conversion.activatedPitches);
-    //}
+//    println("\nTRAINING DATA:");
+//    for (DistilledSlice sl : trimmed) {
+//        logArray(sl.pitchValues);
+//    }
     
-    println("\nTRAINING DATA:");
-    for (DistilledSlice sl : trimmed) {
-        logArray(sl.pitchValues);
-    }
-    
-    // train on data
-    train(trimmed);
+//    // train on data
+//    train(trimmed);
     
     
     
     
     
-  }
-}
+//  }
+//}
 
 // AUDIO PLAYBACK
 
