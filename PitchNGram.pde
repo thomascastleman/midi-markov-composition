@@ -21,9 +21,30 @@ class PitchNGram {
         return sum;
     }
     
+    //public boolean equals(Object obj) {
+    //    PitchNGram casted = (PitchNGram) obj;
+    //    return casted.hash == this.hash;
+    //}
+    
+    // value-by-value comparison to ensure actual equality (expensive)
     public boolean equals(Object obj) {
         PitchNGram casted = (PitchNGram) obj;
-        return casted.hash == this.hash;
+        
+        int[][] pitchVals = casted.pitchValueSlices;
+        for (int s = 0; s < pitchVals.length; s++) {
+            if (pitchVals[s].length != this.pitchValueSlices[s].length) {
+                return false;
+            } else {
+                for (int p = 0; p < pitchVals[s].length; p++) {
+                    if (pitchVals[s][p] != this.pitchValueSlices[s][p]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
+        
     }
     
     

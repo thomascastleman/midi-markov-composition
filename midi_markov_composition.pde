@@ -23,7 +23,7 @@ DistilledSlice currentSlice;  // current slice being played
 HashMap<PitchNGram, ArrayList<DistilledSlice>> map = new HashMap<PitchNGram, ArrayList<DistilledSlice>>();
 
 // number of slices in an n-gram
-int ngram = 2;
+int ngram = 3;
 
 void setup() {
   size(300, 300);
@@ -87,7 +87,7 @@ void draw() {
   currentSlice.duration++;  // increment age of current slice, always
   
   //debug
-  if (frameCount > 1000 && listening == true) {
+  if (frameCount > 1500 && listening == true) {
     println("FINISHED LISTENING");
     listening = false;
     
@@ -118,7 +118,7 @@ void draw() {
     
     println("COMPOSIING...");
     // generate composition
-    ArrayList<DistilledSlice> comp = compose(100, trimmed);
+    ArrayList<DistilledSlice> comp = compose(125, trimmed);
     println("Complete");
     
     println("PLAYING BACK");
