@@ -23,7 +23,7 @@ DistilledSlice currentSlice;  // current slice being played
 HashMap<PitchNGram, ArrayList<DistilledSlice>> map = new HashMap<PitchNGram, ArrayList<DistilledSlice>>();
 
 // number of slices in an n-gram
-int ngram = 1;
+int ngram = 2;
 
 void setup() {
   size(300, 300);
@@ -94,8 +94,8 @@ void draw() {
     noLoop();
     
     // convert to prim array for playback
-    DistilledSlice[] s = castToArray(slices);
-    playBack(s);
+    // DistilledSlice[] s = castToArray(slices);
+    // playBack(s);
     
     // trim slices
     println("\n\nTRIMMING");
@@ -109,10 +109,16 @@ void draw() {
     // train on data
     train(trimmed);
     
+    // debug
+    println("Training pitch sequence");
+    for (DistilledSlice sl : trimmed) {
+        logArray(distilledToPitchArray(sl));
+    }
+    
     
     println("COMPOSIING...");
     // generate composition
-    ArrayList<DistilledSlice> comp = compose(50, trimmed);
+    ArrayList<DistilledSlice> comp = compose(100, trimmed);
     println("Complete");
     
     println("PLAYING BACK");

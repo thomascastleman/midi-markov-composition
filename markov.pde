@@ -36,18 +36,18 @@ void train(ArrayList<DistilledSlice> trainingData) {
     }
   }
   
-  ArrayList<PitchNGram> keys = new ArrayList<PitchNGram>(map.keySet());
+  //ArrayList<PitchNGram> keys = new ArrayList<PitchNGram>(map.keySet());
   
-  for (PitchNGram ngram : keys) {
-      println("key: ");
-      for (int[] arr : ngram.pitchValueSlices) {
-          logArray(arr);
-      }
-      println("values: ");
-      for (DistilledSlice s : map.get(ngram)) {
-          logArray(s.pitchValues);
-      }
-  }
+  //for (PitchNGram ngram : keys) {
+  //    println("key: ");
+  //    for (int[] arr : ngram.pitchValueSlices) {
+  //        logArray(arr);
+  //    }
+  //    println("values: ");
+  //    for (DistilledSlice s : map.get(ngram)) {
+  //        logArray(s.pitchValues);
+  //    }
+  //}
 }
 
 ArrayList<DistilledSlice> compose(int slices, ArrayList<DistilledSlice> training) {
@@ -73,7 +73,7 @@ ArrayList<DistilledSlice> compose(int slices, ArrayList<DistilledSlice> training
         
         
         // DEBUGE
-        println("POSSIBLE SUCCESSORS: ");
+        println("POSSIBLE SUCCESSORS: (len=" + possibleFollowing.size());
         for (DistilledSlice s : possibleFollowing) {
             logArray(s.pitchValues);
         }
