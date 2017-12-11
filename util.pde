@@ -26,6 +26,15 @@ int[] distilledToPitchArray(DistilledSlice s) {
   return active;
 }
 
+// convert an n-gram of distilled slices to a single pitchngram object for hashmap lookup
+PitchNGram slicesToPitchNGram(ArrayList<DistilledSlice> gram) {
+    int[][] values = new int[ngram][];
+    for (int i = 0; i < gram.size(); i++) {
+        values[i] = distilledToPitchArray(gram.get(i));
+    }
+    return new PitchNGram(values);
+}
+
 DistilledSlice[] castToArray(ArrayList<DistilledSlice> arr) {
   DistilledSlice[] copy = new DistilledSlice[arr.size()];
   for (int i = 0; i < arr.size(); i++) {

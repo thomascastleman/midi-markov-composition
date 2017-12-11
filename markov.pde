@@ -48,11 +48,25 @@ void train(ArrayList<DistilledSlice> trainingData) {
           logArray(s.pitchValues);
       }
   }
-  
-  
 }
 
+ArrayList<DistilledSlice> compose(int slices, ArrayList<DistilledSlice> training) {
+    // get random ngram sequence from training data to start of composition
+    int rand = (int) Math.random() * (training.size() - ngram);
+    ArrayList<DistilledSlice> composition = new ArrayList<DistilledSlice>(training.subList(rand, rand + ngram));
 
-DistilledSlice[] compose() {
-  return new DistilledSlice[0];
+    // for given composition length
+    for (int i = 0; i < slices; i++) {
+        // get last ngram as pitchngram object
+        PitchNGram gram = slicesToPitchNGram(new ArrayList<DistilledSlice>(composition.subList(composition.size() - ngram, composition.size())));
+        
+        // get all possible following slices
+        ArrayList<DistilledSlice> possibleFollowing = map.get(gram);
+        
+        // add random slice to composition
+        rand = (int) Math.random() * possibleFollowing.size();
+        composition.add(possibleFollowing.get(rand));
+    }
+
+    return composition;
 }

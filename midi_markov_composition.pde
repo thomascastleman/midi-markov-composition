@@ -23,13 +23,13 @@ DistilledSlice currentSlice;  // current slice being played
 HashMap<PitchNGram, ArrayList<DistilledSlice>> map = new HashMap<PitchNGram, ArrayList<DistilledSlice>>();
 
 // number of slices in an n-gram
-int ngram = 3;
+int ngram = 1;
 
 void setup() {
   size(300, 300);
   frameRate(FRAMERATE);
   
-  // MidiBus.list();  // list available midi devices
+  MidiBus.list();  // list available midi devices
   bus = new MidiBus(this, 0, 3);
   
   currentSlice = new DistilledSlice(0, new int[MAXPITCH - MINPITCH + 1]);
@@ -37,49 +37,49 @@ void setup() {
   
   
   
-  // DBUG -------------------------------------------------------------------
+  //// DBUG -------------------------------------------------------------------
   
-  int[][] t1 = new int[3][];
-  t1[0] = new int[]{0, 1, 2};
-  t1[1] = new int[]{3, 2};
-  t1[2] = new int[]{5, 4, 6};
+  //int[][] t1 = new int[3][];
+  //t1[0] = new int[]{0, 1, 2};
+  //t1[1] = new int[]{3, 2};
+  //t1[2] = new int[]{5, 4, 6};
   
-  int[][] t2 = new int[3][];
-  t2[0] = new int[]{0, 1, 2};
-  t2[1] = new int[]{3, 2};
-  t2[2] = new int[]{5, 4, 6};
+  //int[][] t2 = new int[3][];
+  //t2[0] = new int[]{0, 1, 2};
+  //t2[1] = new int[]{3, 2};
+  //t2[2] = new int[]{5, 4, 6};
   
-  HashMap<PitchNGram, ArrayList<Integer>> map = new HashMap<PitchNGram, ArrayList<Integer>>();
+  //HashMap<PitchNGram, ArrayList<Integer>> map = new HashMap<PitchNGram, ArrayList<Integer>>();
   
-  PitchNGram test1 = new PitchNGram(t1);
-  PitchNGram test2 = new PitchNGram(t2);
+  //PitchNGram test1 = new PitchNGram(t1);
+  //PitchNGram test2 = new PitchNGram(t2);
   
-  println("test 1");
-  for (int[] arr : test1.pitchValueSlices) {
-      logArray(arr);
-  }
-  println("Hash: " + test1.hashCode());
+  //println("test 1");
+  //for (int[] arr : test1.pitchValueSlices) {
+  //    logArray(arr);
+  //}
+  //println("Hash: " + test1.hashCode());
   
-  println("test 2");
-  for (int[] arr : test2.pitchValueSlices) {
-      logArray(arr);
-  }
-  println("Hash: " + test2.hashCode());
+  //println("test 2");
+  //for (int[] arr : test2.pitchValueSlices) {
+  //    logArray(arr);
+  //}
+  //println("Hash: " + test2.hashCode());
   
   
-  ArrayList<Integer> value = new ArrayList<Integer>();
-  value.add(12);
-  map.put(test1, value);
+  //ArrayList<Integer> value = new ArrayList<Integer>();
+  //value.add(12);
+  //map.put(test1, value);
   
-  println(map.get(test1));
-  println(map.get(test2));
+  //println(map.get(test1));
+  //println(map.get(test2));
   
-  ArrayList<Integer> newVal = map.get(test2);
-  newVal.add(132);
-  map.put(test1, newVal);
+  //ArrayList<Integer> newVal = map.get(test2);
+  //newVal.add(132);
+  //map.put(test1, newVal);
   
-  println(map.get(test1));
-  println(map.get(test2));
+  //println(map.get(test1));
+  //println(map.get(test2));
   
 }
 
@@ -108,6 +108,11 @@ void draw() {
     
     // train on data
     train(trimmed);
+    
+    // generate composition
+    ArrayList<DistilledSlice> comp = compose(30, trimmed);
+    
+    playBack(castToArray(comp));
     
     
     
