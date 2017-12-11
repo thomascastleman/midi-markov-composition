@@ -12,7 +12,7 @@ static final int MAXVELOCITY = 127;  // seems to be 127 for some reason
 static final int FRAMERATE = 60;
 static final float FPMS = (float) FRAMERATE / 1000.0; // frames per millisecond
 
-static final int MIN_DURATION = 50;  // min duration for silences
+static final int MIN_DURATION = 0; //50;  // min duration for silences
 
 boolean listening = true;
 
@@ -87,7 +87,7 @@ void draw() {
   currentSlice.duration++;  // increment age of current slice, always
   
   //debug
-  if (frameCount > 1500 && listening == true) {
+  if (frameCount > 3000 && listening == true) {
     println("FINISHED LISTENING");
     listening = false;
     
@@ -118,11 +118,12 @@ void draw() {
     
     println("COMPOSIING...");
     // generate composition
-    ArrayList<DistilledSlice> comp = compose(150, trimmed);
+    ArrayList<DistilledSlice> comp = compose(300, trimmed);
     println("Complete");
     
     println("PLAYING BACK");
     playBack(castToArray(comp));
+    println("Finishd playing back");
     
     
     
