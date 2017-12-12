@@ -72,3 +72,40 @@ void delay(float time) {
   int current = millis();
   while (millis () < current+time) Thread.yield();
 }
+
+// audio playback
+void playBack(ArrayList<DistilledSlice> distSlices) {
+  DistilledSlice previous = null;
+  DistilledSlice current = null;
+  
+  // for each slice
+  for (int i = 0; i < distSlices.size(); i++) {
+    if (i > 0) {
+      previous = distSlices.get(i - 1);
+    }
+    
+    current = distSlices.get(i); 
+    
+    for (int p = 0; p < current.pitchValues.length; p++) {
+      // if previously inactive, but now active
+      if (current.pitchValues[p] != 0 && (previous == null || previous.pitchValues[p] == 0)) {
+        bus.sendNoteOn(CHANNEL, scaleFromPitchIndex(p), current.pitchValues[p]);
+      }
+      // if previously active, but now inactive
+      if (current.pitchValues[p] == 0 && (previous != null && previous.pitchValues[p] != 0)) {
+        bus.sendNoteOff(CHANNEL, scaleFromPitchIndex(p), 0);
+      }
+    }
+    
+    delay(framesToMillis(current.duration));
+  }
+  
+  // end last slice
+  DistilledSlice last = distSlices.get(distSlices.size() - 1);
+  for (int p = 0; p < last.pitchValues.length; p++) {
+    if (last.pitchValues[p] != 0) {
+      bus.sendNoteOff(CHANNEL, scaleFromPitchIndex(p), 0);
+    }
+  }
+  
+}
