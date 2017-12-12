@@ -40,14 +40,7 @@ PitchNGram slicesToPitchNGram(ArrayList<DistilledSlice> gram) {
     return new PitchNGram(values);
 }
 
-DistilledSlice[] castToArray(ArrayList<DistilledSlice> arr) {
-  DistilledSlice[] copy = new DistilledSlice[arr.size()];
-  for (int i = 0; i < arr.size(); i++) {
-    copy[i] = arr.get(i);
-  }
-  return copy;
-}
-
+// log int array to console horizontally
 void logArray(int[] arr) {
   for (int i : arr) {
     print(i + " ");
@@ -55,26 +48,14 @@ void logArray(int[] arr) {
   println("");
 }
 
-// copy an integer array
-int[] copyArray(int[] arr) {
-  int[] copy = new int[arr.length];
-  
-  for (int i = 0; i < arr.length; i++) {
-    copy[i] = arr[i];
-  }
-  return copy;
-}
-
-// make copy of distilled slice
+// make a copy of a distilled slice object
 DistilledSlice copySlice(DistilledSlice s) {
-  DistilledSlice copy = new DistilledSlice((int) s.duration, copyArray(s.pitchValues));
-  copy.numPitches = s.numPitches;
-  return copy;
+    return new DistilledSlice(s.duration, s.pitchValues.clone(), s.numPitches);
 }
 
 // convert frames to their duration in ms
 float framesToMillis(int frames) {
-  return frames * (1 / FPMS);
+  return (float) frames / FPMS;
 }
 
 // get pitch index from a given pitch value
@@ -86,6 +67,7 @@ int scaleFromPitchIndex(int index) {
   return index + MINPITCH;
 }
 
+// delay a given amount of time in ms
 void delay(float time) {
   int current = millis();
   while (millis () < current+time) Thread.yield();

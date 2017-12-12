@@ -1,5 +1,4 @@
 
-
 // MIDI INPUT FUNCTIONS:
 
 // when note on received
@@ -7,40 +6,27 @@ void noteOn(int c, int p, int v) {
   if (listening) {
     
     // debug
-    println(currentSlice.duration);
+    println(p);  
+
+    // add copy of previous slice to slices (now that duration has been recorded)
+    slices.add(copySlice(currentSlice));
     
-    // update slice at pitch position to reflect note activation
-    slices.add(copySlice(currentSlice));  // add copy of previous slice to slices
-    
-    currentSlice.pitchValues[scaleToPitchIndex(p)] = v;  // update current slice to reflect new note
+    // update current slice to reflect new note addition
+    currentSlice.pitchValues[scaleToPitchIndex(p)] = v;
     currentSlice.numPitches++;
-    
-    // debug
-    logArray(currentSlice.pitchValues);
-    
-    currentSlice.duration = 0;  // reset duration
+    currentSlice.duration = 0;    // reset duration, because new slice
   }
 }
 
 // when note off received
 void noteOff(int c, int p, int v) {
   if (listening) {
-    
-    // debug 
-    println(currentSlice.duration);
-    
-    // if not just empty space
-    if (currentSlice.numPitches > 0) {
-      logArray(currentSlice.pitchValues);
       
-      // update slice at pitch position to reflect note deactivation
       slices.add(copySlice(currentSlice));  // add copy of previous slice to slices
-    }
-    
-    currentSlice.pitchValues[scaleToPitchIndex(p)] = 0;  // reset note to 0
-    currentSlice.numPitches--;
-    
-    
-    currentSlice.duration = 0;  // reset duration
+      
+      // update slice to reflect note deactivation
+      currentSlice.pitchValues[scaleToPitchIndex(p)] = 0;  // reset note to 0
+      currentSlice.numPitches--;
+      currentSlice.duration = 0;  // reset duration
   }
 }

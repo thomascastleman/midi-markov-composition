@@ -1,13 +1,11 @@
 
 
 class PitchNGram {
-    
+    // each sub array contains pitch values of all activated pitches during that slice
     int[][] pitchValueSlices;
-    int hash;
    
     PitchNGram(int[][] values) {
         this.pitchValueSlices = values;
-        this.hash = this.hashCode();
     }
     
     // override hashcode function to be value-based for use in hashmap
@@ -20,11 +18,6 @@ class PitchNGram {
         }
         return sum;
     }
-    
-    //public boolean equals(Object obj) {
-    //    PitchNGram casted = (PitchNGram) obj;
-    //    return casted.hash == this.hash;
-    //}
     
     // value-by-value comparison to ensure actual equality (expensive)
     public boolean equals(Object obj) {
@@ -44,8 +37,6 @@ class PitchNGram {
         }
         
         return true;
-        
     }
-    
-    
+
 }
