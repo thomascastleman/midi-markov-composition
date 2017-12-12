@@ -20,13 +20,16 @@ ArrayList<DistilledSlice> trimSliceData(ArrayList<DistilledSlice> rawSlices) {
 
 // convert distilled slice to an array of only the activated pitch values (for hashmap)
 int[] distilledToPitchArray(DistilledSlice s) {
+  s.numPitches = s.numPitches >= 0 ? s.numPitches : 0;
   int[] active = new int[s.numPitches];
   int index = 0;
-  for (int p = 0; p < s.pitchValues.length; p++) {
-    if (s.pitchValues[p] != 0) {
-      active[index] = p;
-      index++;
-    }
+  if (active.length > 0) {
+      for (int p = 0; p < s.pitchValues.length; p++) {
+        if (s.pitchValues[p] != 0) {
+          active[index] = p;
+          index++;
+        }
+      }
   }
   return active;
 }
@@ -53,11 +56,6 @@ DistilledSlice copySlice(DistilledSlice s) {
     return new DistilledSlice(s.duration, s.pitchValues.clone(), s.numPitches);
 }
 
-// convert frames to their duration in ms
-float framesToMillis(int frames) {
-  return (float) frames / FPMS;
-}
-
 // get pitch index from a given pitch value
 int scaleToPitchIndex(int pitch) {
   return pitch - MINPITCH;
@@ -67,10 +65,27 @@ int scaleFromPitchIndex(int index) {
   return index + MINPITCH;
 }
 
+// convert frames to their duration in ms
+float framesToMillis(int frames) {
+  return (float) frames / FPMS;
+}
+
+// convert frames to duration in seconds
+float framesToSeconds(int frames) {
+    return (float) frames / frameRate;
+}
+
 // delay a given amount of time in ms
 void delay(float time) {
   int current = millis();
   while (millis () < current+time) Thread.yield();
+}
+
+// send all notes off
+void sendAllOff() {
+    for (int p = MINPITCH; p <= MAXPITCH; p++) {
+        bus.sendNoteOff(CHANNEL, p, 0);
+    }
 }
 
 // audio playback

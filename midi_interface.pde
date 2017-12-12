@@ -6,7 +6,7 @@ void noteOn(int c, int p, int v) {
   if (listening) {
     
     // debug
-    println(p);  
+    println("Note @ pitch " + p);  
 
     // add copy of previous slice to slices (now that duration has been recorded)
     slices.add(copySlice(currentSlice));
@@ -28,5 +28,7 @@ void noteOff(int c, int p, int v) {
       currentSlice.pitchValues[scaleToPitchIndex(p)] = 0;  // reset note to 0
       currentSlice.numPitches--;
       currentSlice.duration = 0;  // reset duration
+      
+      lastNoteOff = frameCount;    // record last note off at current frame count
   }
 }
